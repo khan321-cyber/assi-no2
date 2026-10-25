@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Event Registration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #eef1f6; }
+    #regCard { max-width: 520px; margin: 40px auto; transition: background .4s; }
+    #regCard h3 { transition: color .4s; }
+    .btn-hover { background: #ffc107 !important; }
+    pre { background: #222; color: #9ef; padding: 15px; max-width: 900px;
+          margin: 30px auto; overflow-x: auto; font-size: 13px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- ========== COMPONENT ========== -->
+<div class="card shadow" id="regCard">
+  <div class="card-body">
+    <h3 id="eventTitle" class="card-title">TechFest 2026 Registration</h3>
+    <p class="text-muted">Join our annual university event. Fill in your details below to reserve a seat.</p>
+
+    <!-- jQuery: show/hide + effect -->
+    <button class="btn btn-outline-secondary btn-sm mb-2" id="toggleInfo">Show / Hide Instructions</button>
+    <div id="instructions" class="alert alert-info">
+      1. Enter your full name.<br>
+      2. Enter a valid email.<br>
+      3. Choose an event and click Register.
+    </div>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Student Name</label>
+      <input type="text" id="name" class="form-control" placeholder="Enter your name">
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" id="email" class="form-control" placeholder="Enter your email">
+    </div>
+    <div class="mb-3">
+      <label for="event" class="form-label">Select Event</label>
+      <select id="event" class="form-select">
+        <option>Hackathon</option>
+        <option>Robotics Workshop</option>
+        <option>Career Fair</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary" id="registerBtn">Register</button>
+    <button class="btn btn-warning" id="colorBtn">Change Color</button>
+    <button class="btn btn-success" id="detailsBtn">Event Details</button>
+
+    <!-- Message area -->
+    <div id="message" class="mt-3"></div>
+
+    <!-- jQuery slideToggle section -->
+    <div id="details" class="mt-3 p-2 border rounded" style="display:none;">
+      <strong>Venue:</strong> Main Auditorium<br>
+      <strong>Date:</strong> 30th November 2026<br>
+      <strong>Time:</strong> 10:00 AM
+    </div>
+
+    <!-- jQuery dynamic list -->
+    <h6 class="mt-4">Registered Students</h6>
+    <ul id="studentList" class="list-group"></ul>
+  </div>
+</div>
+<!-- ========== END COMPONENT ========== -->
+
+<h5 class="text-center">Complete Source Code</h5>
+<pre id="source">Loading code...</pre>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+  /* ---------- Plain JavaScript ---------- */
+
+  // 1 + 2: validation and personalised message
+  function registerStudent() {
+    var name = document.getElementById("name").value.trim();
+    var email = document.getElementById("email").value.trim();
+    var event = document.getElementById("event").value;
+    var msg = document.getElementById("message");
+
+    if (name === "" || email === "") {
+      msg.innerHTML = '<div class="alert alert-danger">Please fill in both name and email.</div>';
+      return false;
+    }
+    msg.innerHTML = '<div class="alert alert-success">Thank you, <b>' + name +
+                    '</b>! You are registered for <b>' + event + '</b>.</div>';
+    return { name: name, event: event };
+  }
+
+  // 3: style manipulation
+  var colors = ["#ffffff", "#e3f2fd", "#fff3cd", "#d1e7dd"];
+  var headColors = ["#000000", "#0d6efd", "#b02a37", "#198754"];
+  var c = 0;
+  document.getElementById("colorBtn").onclick = function () {
+    c = (c + 1) % colors.length;
+    document.getElementById("regCard").style.backgroundColor = colors[c];
+    document.getElementById("eventTitle").style.color = headColors[c];
+  };
+
+  /* ---------- jQuery ---------- */
+  $(document).ready(function () {
+
+    // Register button: JS validation, then jQuery adds to list (dynamic content)
+    $("#registerBtn").click(function () {
+      var result = registerStudent();
+      if (result) {
+        $("#studentList")
+          .append('<li class="list-group-item">' + result.name + " - " + result.event + "</li>")
+          .find("li:last").hide().fadeIn(600);        // fadeIn effect
+        $("#name, #email").val("");
+      }
+    });
+
+    // Show / Hide instructions
+    $("#toggleInfo").click(function () {
+      $("#instructions").toggle();
+    });
+
+    // slideToggle effect
+    $("#detailsBtn").click(function () {
+      $("#details").slideToggle(400);
+    });
+
+    // Event handling + selectors: mouseover / mouseout
+    $("#registerBtn").mouseover(function () {
+      $(this).addClass("btn-hover");
+    }).mouseout(function () {
+      $(this).removeClass("btn-hover");
+    });
+
+    // Show page's own source code inside <pre>
+    $.get(location.href, function (code) {
+      $("#source").text(code);
+    }, "text");
+  });
+</script>
+</body>
+</html>
